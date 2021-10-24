@@ -35,11 +35,18 @@ var listener = app.listen(process.env.PORT, function () {
 app.get("/api/:date", (req, res) => {
   const date = req.params.date
 
-  let unixTimestamp, utcTimestamp;
-
-  if(date.includes('-')) {
-    utcTimestamp = new Date(date).toUTCString();
-    unixTimestamp = new Date(date).getTime();
+  let utcTimestamp = new Date().toUTCString();
+  let unixTimestamp = new Date().getTime();
+  
+  if (date != null)  {
+    if (date.includes('-')) {
+      utcTimestamp = new Date(date).toUTCString();
+      unixTimestamp = new Date(date).getTime();
+    } else {
+      unixTimestamp = parseInt(date)
+      utcTimestamp = new Date(unixTimestamp).toUTCString();
+    }
   }
+
   res.json({unix: unixTimestamp, utc: utcTimestamp});
 });
