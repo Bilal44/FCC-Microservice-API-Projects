@@ -32,21 +32,23 @@ var listener = app.listen(process.env.PORT, function () {
 });
 
 // timestamp implementation
-app.get("/api/:date", (req, res) => {
+app.get("/api/:date?", (req, res) => {
   const date = req.params.date
-
+  let parsedDate = new Date(date);
   let utcTimestamp = new Date().toUTCString();
   let unixTimestamp = new Date().getTime();
   
   if (date != null)  {
-    if (date.includes('-')) {
-      utcTimestamp = new Date(date).toUTCString();
-      unixTimestamp = new Date(date).getTime();
-    } else {
+    if (!date.includes('-') && !date.includes(' ')) {
       unixTimestamp = parseInt(date)
-      utcTimestamp = new Date(unixTimestamp).toUTCString();
+      utcTimestamp = new Date(unixTimestamp).toUTCString()
+    } else {
+      utcTimestamp = parsedDate.toUTCString();
+      unixTimestamp = parsedDate.getTime();
+      if (utcTimestamp == "Invalid Date") {
+        res.json({error : "Invalid Date"});
+      }
     }
   }
-
   res.json({unix: unixTimestamp, utc: utcTimestamp});
 });
