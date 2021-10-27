@@ -43,3 +43,19 @@ app.post("/api/shorturl", async (req, res) => {
     res.status[500].json('Server error...')
   }
 });
+
+// url redirection implementation
+app.get("/api/shorturl/:url?", async (req, res) => {
+  try {
+    await Url.findById(req.params.url, (err, data) => {
+      if (data) {
+        res.redirect(data.url);
+      } else {
+        res.json('No such URL'); 
+      }
+    });
+  } catch (err) {
+    console.error(err)
+    res.status[500].json('Server error...')
+  }
+});
