@@ -9,6 +9,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true,
 useUnifiedTopology: true })
+const schema = new mongoose.Schema({url: 'string'});
+const Url = mongoose.model('Url', schema);
 
 app.use(cors());
 
@@ -30,6 +32,14 @@ app.listen(port, function() {
 });
 
 // url shortener implementation
-app.post("/api/shorturl/new", (req, res) => {
-  res.json({original_url: req.body.url, short_url: 1});
+app.post("/api/shorturl", async (req, res) => {
+  const urlModel = new Url({ url: req.body.url });
+  try {
+    await urlModel.save((err, data) => {
+      res.json({original_url: data.url, short_url: data.id});
+    }); 
+  } catch (err) {
+    console.error(err)
+    res.status[500].json('Server error...')
+  }
 });
