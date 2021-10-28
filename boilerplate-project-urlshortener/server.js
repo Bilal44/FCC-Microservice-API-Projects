@@ -37,18 +37,20 @@ app.listen(port, function() {
 app.post("/api/shorturl", async (req, res) => {
   var urlInput = req.body.url
   const urlModel = new Url({ url: urlInput });
-  dns.lookup(urlParser.parse(urlInput).hostname, (err, url) => {
-    res.json({url: url})
+  dns.lookup(urlParser.parse(urlInput).hostname, async (err, address) => {
+    if (address) {
+      try {
+        await urlModel.save((err, data) => {
+          res.json({original_url: data.url, short_url: data.id});
+        }); 
+      } catch (err) {
+        console.error(err)
+        res.status[500].json('Server error...');
+      }
+    } else {
+      res.json({error: 'invalid url' });
+    }
   });
-  
-  try {
-    await urlModel.save((err, data) => {
-      res.json({original_url: data.url, short_url: data.id});
-    }); 
-  } catch (err) {
-    console.error(err)
-    res.status[500].json('Server error...');
-  }
 });
 
 // url redirection implementation
