@@ -10,7 +10,7 @@ const app = express();
 // Basic Configuration
 const port = process.env.PORT || 3000;
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true,
-useUnifiedTopology: true })
+useUnifiedTopology: true });
 const schema = new mongoose.Schema({url: 'string'});
 const Url = mongoose.model('Url', schema);
 
