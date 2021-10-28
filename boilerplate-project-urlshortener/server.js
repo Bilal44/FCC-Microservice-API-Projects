@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const dns = require('dns');
+const urlParser = require('url');
 const app = express();
 
 // Basic Configuration
@@ -33,14 +35,19 @@ app.listen(port, function() {
 
 // url shortener implementation
 app.post("/api/shorturl", async (req, res) => {
-  const urlModel = new Url({ url: req.body.url });
+  var urlInput = req.body.url
+  const urlModel = new Url({ url: urlInput });
+  dns.lookup(urlParser.parse(urlInput).hostname, (err, url) => {
+    res.json({url: url})
+  });
+  
   try {
     await urlModel.save((err, data) => {
       res.json({original_url: data.url, short_url: data.id});
     }); 
   } catch (err) {
     console.error(err)
-    res.status[500].json('Server error...')
+    res.status[500].json('Server error...');
   }
 });
 
@@ -56,6 +63,6 @@ app.get("/api/shorturl/:url?", async (req, res) => {
     });
   } catch (err) {
     console.error(err)
-    res.status[500].json('Server error...')
+    res.status[500].json('Server error...');
   }
 });
