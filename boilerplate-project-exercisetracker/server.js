@@ -67,7 +67,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
         const newExercise = new Exercise({ userId, description, duration, date })
         try { 
           newExercise.save((err, data) => {
-            res.json({ username: username, _id: userId, description: description, duration: duration, date: formattedDate });
+            res.json({ username: username, _id: userId, description: description, duration: Number(duration), date: formattedDate });
           }); 
         } catch (err) {
           console.error(err)
