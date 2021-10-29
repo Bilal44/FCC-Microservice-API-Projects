@@ -58,12 +58,16 @@ app.post("/api/users/:_id/exercises", (req, res) => {
       } else {
         const username = data.username;
         const userId = data._id;
+        var formattedDate = new Date(date).toDateString();
+        if (formattedDate == "Invalid Date"){
+          formattedDate = new Date().toDateString();
+        }
         
         // Save new exercise record for the user
         const newExercise = new Exercise({ userId, description, duration, date })
         try { 
           newExercise.save((err, data) => {
-            res.json({ username: username, _id: userId, description: description, duration: duration, date: date });
+            res.json({ username: username, _id: userId, description: description, duration: duration, date: formattedDate });
           }); 
         } catch (err) {
           console.error(err)
