@@ -11,6 +11,9 @@ mongoose.connect(process.env['MONGO_URI'], { useNewUrlParser: true,
 useUnifiedTopology: true })
 const userSchema = new mongoose.Schema({ username: 'string' })
 const User = mongoose.model('User', userSchema)
+const exerciseSchema = new mongoose.Schema({ userId: 'string', description: 'string', duration: Number, date: Date});
+const Exercise = mongoose.model('Exercise', exerciseSchema);
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())
