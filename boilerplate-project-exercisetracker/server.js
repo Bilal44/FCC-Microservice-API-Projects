@@ -9,8 +9,8 @@ require('dotenv').config()
 const port = process.env.PORT || 3000;
 mongoose.connect(process.env['MONGO_URI'], { useNewUrlParser: true,
 useUnifiedTopology: true })
-const personSchema = new mongoose.Schema({ username: 'string' })
-const Person = mongoose.model('Person', personSchema)
+const userSchema = new mongoose.Schema({ username: 'string' })
+const User = mongoose.model('User', userSchema)
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())
@@ -19,9 +19,21 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 })
 
-// create new user
+// Get a list of all existing users
+app.get("/api/users", async (req, res) => {
+  try { 
+    await User.find({}, (err, data)=>{
+      res.json(data);
+    })
+  } catch (err) {
+    console.error(err)
+    res.status[500].json('Server error...');
+  }
+})
+
+// Create new user
 app.post("/api/users", async (req, res) => {
-  const newUser = new Person ({ username: req.body.username })
+  const newUser = new User ({ username: req.body.username })
   try { 
     await newUser.save((err, data) => {
       res.json({ username: data.username, _id: data.id });
