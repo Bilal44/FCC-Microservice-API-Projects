@@ -4,17 +4,17 @@ const bodyParser = require('body-parser');
 const app = express()
 const cors = require('cors');
 const { json } = require('express');
-require('dotenv').config()
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, './process.env') });
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
-mongoose.connect(process.env['MONGO_URI'], { useNewUrlParser: true,
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true,
 useUnifiedTopology: true })
 const userSchema = new mongoose.Schema({ username: 'string' })
 const User = mongoose.model('User', userSchema)
 const exerciseSchema = new mongoose.Schema({ userId: 'string', description: 'string', duration: Number, date: Date});
 const Exercise = mongoose.model('Exercise', exerciseSchema);
-
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())
@@ -49,8 +49,21 @@ app.post("/api/users", async (req, res) => {
 })
 
 // Create a new exercise
-app.post("/api/users/:_id/exercises", async (req, res) => {
-  res.json(req.body);
+app.post("/api/users/:_id/exercises", (req, res) => {
+  const { description, duration, date } = req.body;
+  try {
+    User.findById(req.params._id, (err, data) => {
+      if (!data) {
+        res.json('Invalid user id, no user found.'); 
+      } else {
+        const username = data.username;
+        res.json({ user_found: username });
+      }
+    });
+  } catch (err) {
+    console.error(err)
+    res.status[500].json('Server error...');
+  }
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {
