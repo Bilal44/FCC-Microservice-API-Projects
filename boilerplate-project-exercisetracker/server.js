@@ -57,7 +57,18 @@ app.post("/api/users/:_id/exercises", (req, res) => {
         res.json('Invalid user id, no user found.'); 
       } else {
         const username = data.username;
-        res.json({ user_found: username });
+        const userId = data._id;
+        
+        // Save new exercise record for the user
+        const newExercise = new Exercise({ userId, description, duration, date })
+        try { 
+          newExercise.save((err, data) => {
+            res.json({ username: username, _id: userId, description: description, duration: duration, date: date });
+          }); 
+        } catch (err) {
+          console.error(err)
+          res.status[500].json('Server error...');
+        }
       }
     });
   } catch (err) {
