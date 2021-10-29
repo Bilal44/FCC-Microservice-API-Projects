@@ -2,7 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express()
-const cors = require('cors')
+const cors = require('cors');
+const { json } = require('express');
 require('dotenv').config()
 
 // Basic Configuration
@@ -47,7 +48,10 @@ app.post("/api/users", async (req, res) => {
   }
 })
 
-
+// Create a new exercise
+app.post("/api/users/:_id/exercises", async (req, res) => {
+  res.json(req.body);
+})
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
