@@ -3,18 +3,18 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express()
 const cors = require('cors');
-const { json } = require('express');
 const path = require('path');
-const { error } = require('console');
 require('dotenv').config({ path: path.resolve(__dirname, './process.env') });
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true,
-useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 const userSchema = new mongoose.Schema({ username: 'string' })
 const User = mongoose.model('User', userSchema)
-const exerciseSchema = new mongoose.Schema({ userId: 'string', description: 'string', duration: Number, date: Date});
+const exerciseSchema = new mongoose.Schema({ userId: 'string', description: 'string', duration: Number, date: Date });
 const Exercise = mongoose.model('Exercise', exerciseSchema);
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,8 +26,8 @@ app.get('/', (req, res) => {
 
 // Get a list of all existing users
 app.get("/api/users", async (req, res) => {
-  try { 
-    await User.find({}, (err, data)=>{
+  try {
+    await User.find({}, (err, data) => {
       res.json(data);
     })
   } catch (err) {
@@ -38,32 +38,40 @@ app.get("/api/users", async (req, res) => {
 
 // Create new user
 app.post("/api/users", (req, res) => {
-  const newUser = new User ({ username: req.body.username })
-  
+  const newUser = new User({ username: req.body.username })
+
   // Check if a user exists with the same username
   var userExists = false;
-  User.findOne({ username : req.body.username }, (err, data) => {
-  try {
-    if(err) {
-      res.status[500].json('Server error...');
-    }
-    if (data) {
-      userExists = true;
-      res.json({ error: 'A user with this username already exists, please select a new username.' });
-    }
-  } catch (err) {
-    res.status[500].json('Server error...');
+  User.findOne({ username: req.body.username }, (err, data) => {
+    try {
+      if (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+      } else {
+        if (data) {
+          userExists = true;
+          res.json({ error: 'A user with this username already exists, please select a new username.' });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send(err.message);
     }
   })
 
   if (userExists) {
-    try { 
+    try {
       newUser.save((err, data) => {
-        res.json({ username: data.username, _id: data.id });
-      }); 
+        if (err) {
+          console.error(err);
+          res.status(500).send(err.message);
+        } else {
+          res.json({ username: data.username, _id: data.id });
+        }
+      });
     } catch (err) {
-      console.error(err)
-      res.status[500].json('Server error...');
+      console.error(err);
+      res.status(500).send(err.message);
     }
   }
 })
@@ -74,7 +82,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   try {
     User.findById(req.params._id, (err, data) => {
       if (!data) {
-        res.json({ error: 'Invalid user id, no user found.' }); 
+        res.json({ error: 'Invalid user id, no user found.' });
       } else {
         const username = data.username;
         const userId = data._id;
@@ -84,10 +92,10 @@ app.post("/api/users/:_id/exercises", (req, res) => {
         if (date == "Invalid Date") {
           date = new Date();
         }
-        
+
         // Save new exercise record for the user
         const newExercise = new Exercise({ userId, description, duration, date })
-        try { 
+        try {
           newExercise.save((err, data) => {
             if (err) {
               console.error(err);
@@ -95,16 +103,16 @@ app.post("/api/users/:_id/exercises", (req, res) => {
             } else {
               res.json({ username: username, _id: userId, description: data.description, duration: data.duration, date: data.date.toDateString() });
             }
-          }); 
+          });
         } catch (err) {
-          console.error(err)
-          res.json('Server error...');
+          console.error(err);
+          res.status(500).send(err.message);
         }
       }
     });
   } catch (err) {
-    console.error(err)
-    res.status[500].json('Server error...');
+    console.error(err);
+    res.status(500).send(err.message);
   }
 })
 
