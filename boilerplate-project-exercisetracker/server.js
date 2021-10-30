@@ -25,9 +25,9 @@ app.get('/', (req, res) => {
 })
 
 // Get a list of all existing users
-app.get("/api/users", async (req, res) => {
+app.get("/api/users", (req, res) => {
   try {
-    await User.find({}, (err, data) => {
+    User.find({}, (err, data) => {
       if (err) {
         console.error(err);
         res.status(500).send(err.message);
