@@ -5,6 +5,7 @@ const app = express()
 const cors = require('cors');
 const { json } = require('express');
 const path = require('path');
+const { error } = require('console');
 require('dotenv').config({ path: path.resolve(__dirname, './process.env') });
 
 // Basic Configuration
@@ -36,23 +37,34 @@ app.get("/api/users", async (req, res) => {
 })
 
 // Create new user
-app.post("/api/users", async (req, res) => {
+app.post("/api/users", (req, res) => {
   const newUser = new User ({ username: req.body.username })
   
   // Check if a user exists with the same username
-  await User.findOne({ username : req.body.username}, (err, data) => {
+  var userExists = false;
+  User.findOne({ username : req.body.username }, (err, data) => {
+  try {
+    if(err) {
+      res.status[500].json('Server error...');
+    }
     if (data) {
-      res.json({ error: 'A user with this username already exists, please select a new username.' })
+      userExists = true;
+      res.json({ error: 'A user with this username already exists, please select a new username.' });
+    }
+  } catch (err) {
+    res.status[500].json('Server error...');
     }
   })
 
-  try { 
-    await newUser.save((err, data) => {
-      res.json({ username: data.username, _id: data.id });
-    }); 
-  } catch (err) {
-    console.error(err)
-    res.status[500].json('Server error...');
+  if (userExists) {
+    try { 
+      newUser.save((err, data) => {
+        res.json({ username: data.username, _id: data.id });
+      }); 
+    } catch (err) {
+      console.error(err)
+      res.status[500].json('Server error...');
+    }
   }
 })
 
@@ -75,11 +87,16 @@ app.post("/api/users/:_id/exercises", (req, res) => {
         const newExercise = new Exercise({ userId, description, duration, date })
         try { 
           newExercise.save((err, data) => {
-            res.json({ username: username, _id: userId, description: description, duration: Number(duration), date: formattedDate });
+            if (err) {
+              console.error(err);
+              res.status(500).send(err.message);
+            } else {
+              res.json({ username: username, _id: userId, description: data.description, duration: data.duration, date: new Date(data.date).toDateString() });
+            }
           }); 
         } catch (err) {
           console.error(err)
-          res.status[500].json('Server error...');
+          res.json('Server error...');
         }
       }
     });
