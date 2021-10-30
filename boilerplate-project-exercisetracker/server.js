@@ -38,6 +38,14 @@ app.get("/api/users", async (req, res) => {
 // Create new user
 app.post("/api/users", async (req, res) => {
   const newUser = new User ({ username: req.body.username })
+  
+  // Check if a user exists with the same username
+  await User.findOne({ username : req.body.username}, (err, data) => {
+    if (data) {
+      res.json({ error: 'A user with this username already exists, please select a new username.' })
+    }
+  })
+
   try { 
     await newUser.save((err, data) => {
       res.json({ username: data.username, _id: data.id });
@@ -54,7 +62,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   try {
     User.findById(req.params._id, (err, data) => {
       if (!data) {
-        res.json('Invalid user id, no user found.'); 
+        res.json({ error: 'Invalid user id, no user found.' }); 
       } else {
         const username = data.username;
         const userId = data._id;
