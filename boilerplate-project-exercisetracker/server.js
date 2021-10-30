@@ -70,7 +70,7 @@ app.post("/api/users", (req, res) => {
 
 // Create a new exercise
 app.post("/api/users/:_id/exercises", (req, res) => {
-  const { description, duration, date } = req.body;
+  var { description, duration, date } = req.body;
   try {
     User.findById(req.params._id, (err, data) => {
       if (!data) {
@@ -78,9 +78,11 @@ app.post("/api/users/:_id/exercises", (req, res) => {
       } else {
         const username = data.username;
         const userId = data._id;
-        var formattedDate = new Date(date).toDateString();
-        if (formattedDate == "Invalid Date"){
-          formattedDate = new Date().toDateString();
+
+        // Insert today's date if invalid or no date was provided by user
+        date = new Date(date);
+        if (date == "Invalid Date") {
+          date = new Date();
         }
         
         // Save new exercise record for the user
@@ -91,7 +93,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
               console.error(err);
               res.status(500).send(err.message);
             } else {
-              res.json({ username: username, _id: userId, description: data.description, duration: data.duration, date: new Date(data.date).toDateString() });
+              res.json({ username: username, _id: userId, description: data.description, duration: data.duration, date: data.date.toDateString() });
             }
           }); 
         } catch (err) {
