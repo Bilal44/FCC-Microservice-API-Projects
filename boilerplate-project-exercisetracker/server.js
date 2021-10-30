@@ -28,51 +28,52 @@ app.get('/', (req, res) => {
 app.get("/api/users", async (req, res) => {
   try {
     await User.find({}, (err, data) => {
-      res.json(data);
+      if (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+      } else {
+        res.json(data);
+      }
     })
   } catch (err) {
-    console.error(err)
-    res.status[500].json('Server error...');
+    console.error(err);
+    res.status(500).send(err.message);
   }
 })
 
 // Create new user
 app.post("/api/users", (req, res) => {
-  const newUser = new User({ username: req.body.username })
-
   // Check if a user exists with the same username
-  var userExists = false;
-  User.findOne({ username: req.body.username }, (err, data) => {
-    try {
+  try {
+    User.findOne({ username: req.body.username }, (err, data) => {
       if (err) {
         console.error(err);
         res.status(500).send(err.message);
       } else {
         if (data) {
-          userExists = true;
           res.json({ error: 'A user with this username already exists, please select a new username.' });
+        } else {
+          // Create a new user record if an existing user with the provided username not found
+          try {
+            const newUser = new User({ username: req.body.username })
+            newUser.save((err, data) => {
+              if (err) {
+                console.error(err);
+                res.status(500).send(err.message);
+              } else {
+                res.json({ username: data.username, _id: data.id });
+              }
+            });
+          } catch (err) {
+            console.error(err);
+            res.status(500).send(err.message);
+          }
         }
       }
-    } catch (err) {
-      console.error(err);
-      res.status(500).send(err.message);
-    }
-  })
-
-  if (userExists) {
-    try {
-      newUser.save((err, data) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send(err.message);
-        } else {
-          res.json({ username: data.username, _id: data.id });
-        }
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).send(err.message);
-    }
+    })
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
   }
 })
 
@@ -104,6 +105,38 @@ app.post("/api/users/:_id/exercises", (req, res) => {
               res.json({ username: username, _id: userId, description: data.description, duration: data.duration, date: data.date.toDateString() });
             }
           });
+        } catch (err) {
+          console.error(err);
+          res.status(500).send(err.message);
+        }
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+})
+
+// Get an exercise log belonging to a  specific user
+app.get("/api/users/:_id/logs", (req, res) => {
+  try {
+    User.findById(req.params._id, (err, data) => {
+      if (!data) {
+        res.json({ error: 'Invalid user id, no user found.' });
+      } else {
+        const username = data.username;
+        const userId = data._id;
+
+        // Get exercise count for a valid user
+        try {
+          Exercise.count({ username: username }, (err, data) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send(err.message);
+            } else {
+              res.json({ username, _id: userId, count: data });
+            }
+          })
         } catch (err) {
           console.error(err);
           res.status(500).send(err.message);
