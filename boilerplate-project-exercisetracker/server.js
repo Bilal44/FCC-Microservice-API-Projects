@@ -121,6 +121,10 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 app.get("/api/users/:_id/logs", (req, res) => {
   try {
     User.findById(req.params._id, (err, data) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+      } else {
       if (!data) {
         res.json({ error: 'Invalid user id, no user found.' });
       } else {
@@ -134,7 +138,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
               console.error(err);
               res.status(500).send(err.message);
             } else {
-              res.json({ username, _id: userId, count: data.length });
+              res.json({ username, _id: userId, count: data.length, log: data });
             }
           })
         } catch (err) {
@@ -142,6 +146,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
           res.status(500).send(err.message);
         }
       }
+    }
     });
   } catch (err) {
     console.error(err);
