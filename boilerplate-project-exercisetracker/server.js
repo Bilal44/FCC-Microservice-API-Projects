@@ -117,7 +117,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   }
 })
 
-// Get an exercise log belonging to a  specific user
+// Get the exercise log belonging to a specific user
 app.get("/api/users/:_id/logs", (req, res) => {
   try {
     User.findById(req.params._id, (err, data) => {
@@ -129,12 +129,12 @@ app.get("/api/users/:_id/logs", (req, res) => {
 
         // Get exercise count for a valid user
         try {
-          Exercise.count({ username: username }, (err, data) => {
+          Exercise.find({ username: username }, (err, data) => {
             if (err) {
               console.error(err);
               res.status(500).send(err.message);
             } else {
-              res.json({ username, _id: userId, count: data });
+              res.json({ username, _id: userId, count: data.length });
             }
           })
         } catch (err) {
