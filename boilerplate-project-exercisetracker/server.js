@@ -120,7 +120,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 // Get the exercise log belonging to a specific user
 app.get("/api/users/:_id/logs", (req, res) => {
   var { from, to, limit } = req.query;
-  if (from == null) from = new Date("0001-01-01");
+  if (from == null) from = new Date("0000-01-01");
   if (to == null) to = new Date();
   if (limit == null) limit = 0;
 
