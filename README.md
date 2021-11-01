@@ -6,4 +6,4 @@ Five projects developed for FreeCodeCamp's 'Back End Development and APIs' onlin
 - Request Header Parser Microservice :heavy_check_mark:
 - URL Shortener Microservice :heavy_check_mark:
 - Exercise Tracker (Full Stack) :heavy_check_mark:
-- File Metadata Microservice :construction:
+- File Metadata Microservice :heavy_check_mark:

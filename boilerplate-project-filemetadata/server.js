@@ -13,8 +13,9 @@ app.get('/', function (req, res) {
     res.sendFile(process.cwd() + '/views/index.html');
 });
 
-app.get('/api/fileanalyse', upload.single('upfile'), function (req, res) {
-    res.json("Success!");
+// Single file upload implementation return file name, file type and file size 
+app.post('/api/fileanalyse', upload.single('upfile'), function (req, res) {
+    res.json({ name: req.file.originalname, type: req.file.mimetype, size: req.file.size });
 });
 
 const port = process.env.PORT || 3000;

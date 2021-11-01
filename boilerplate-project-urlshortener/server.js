@@ -29,11 +29,7 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-app.listen(port, function() {
-  console.log(`Listening on port ${port}`);
-});
-
-// url shortener implementation
+// Url shortener implementation
 app.post("/api/shorturl", async (req, res) => {
   var urlInput = req.body.url
   const urlModel = new Url({ url: urlInput });
@@ -53,7 +49,7 @@ app.post("/api/shorturl", async (req, res) => {
   });
 });
 
-// url redirection implementation
+// Url redirection implementation
 app.get("/api/shorturl/:url?", async (req, res) => {
   try {
     await Url.findById(req.params.url, (err, data) => {
@@ -67,4 +63,8 @@ app.get("/api/shorturl/:url?", async (req, res) => {
     console.error(err)
     res.status[500].json('Server error...');
   }
+});
+
+app.listen(port, function() {
+  console.log(`Listening on port ${port}`);
 });
