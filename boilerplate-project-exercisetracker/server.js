@@ -125,28 +125,30 @@ app.get("/api/users/:_id/logs", (req, res) => {
         console.error(err);
         res.status(500).send(err.message);
       } else {
-      if (!data) {
-        res.json({ error: 'Invalid user id, no user found.' });
-      } else {
-        const username = data.username;
-        const userId = data._id;
+        if (!data) {
+          res.json({ error: 'Invalid user id, no user found.' });
+        } else {
+          const username = data.username;
+          const userId = data._id;
 
-        // Get exercise count for a valid user
-        try {
-          Exercise.find({ username: username }, (err, data) => {
-            if (err) {
-              console.error(err);
-              res.status(500).send(err.message);
-            } else {
-              res.json({ username, _id: userId, count: data.length, log: data });
-            }
-          })
-        } catch (err) {
-          console.error(err);
-          res.status(500).send(err.message);
+          // Populate exercise log for a valid user
+          try {
+            Exercise.find({ userId: userId }, (err, data) => {
+              if (err) {
+                console.error(err);
+                res.status(500).send(err.message);
+              } else {
+                var exercise = data.map(({ description, duration, date }) =>
+                  ({ description, duration: duration, date: date.toDateString() }));
+                res.json({ username, _id: userId, count: data.length, log: exercise })
+              }
+            })
+          } catch (err) {
+            console.error(err);
+            res.status(500).send(err.message);
+          }
         }
       }
-    }
     });
   } catch (err) {
     console.error(err);
