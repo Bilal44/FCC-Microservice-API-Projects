@@ -119,6 +119,8 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 
 // Get the exercise log belonging to a specific user
 app.get("/api/users/:_id/logs", (req, res) => {
+  const {from, to, limit} = req.query;
+  
   try {
     User.findById(req.params._id, (err, data) => {
       if (err) {
@@ -142,7 +144,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
                   ({ description, duration: duration, date: date.toDateString() }));
                 res.json({ username, _id: userId, count: data.length, log: exercise })
               }
-            })
+            }).limit(limit)
           } catch (err) {
             console.error(err);
             res.status(500).send(err.message);
