@@ -119,8 +119,11 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 
 // Get the exercise log belonging to a specific user
 app.get("/api/users/:_id/logs", (req, res) => {
-  const {from, to, limit} = req.query;
-  
+  var { from, to, limit } = req.query;
+  if (from == null) from = new Date("0001-01-01");
+  if (to == null) to = new Date();
+  if (limit == null) limit = 0;
+
   try {
     User.findById(req.params._id, (err, data) => {
       if (err) {
@@ -135,7 +138,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
 
           // Populate exercise log for a valid user
           try {
-            Exercise.find({ userId: userId }, (err, data) => {
+            Exercise.find({ userId, date: { $gte: new Date(from), $lte: new Date(to) } }, (err, data) => {
               if (err) {
                 console.error(err);
                 res.status(500).send(err.message);
@@ -144,7 +147,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
                   ({ description, duration: duration, date: date.toDateString() }));
                 res.json({ username, _id: userId, count: data.length, log: exercise })
               }
-            }).limit(limit)
+            }).limit(+limit);
           } catch (err) {
             console.error(err);
             res.status(500).send(err.message);
