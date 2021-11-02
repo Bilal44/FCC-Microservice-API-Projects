@@ -7,3 +7,7 @@ Five projects developed for FreeCodeCamp's 'Back End Development and APIs' onlin
 - URL Shortener Microservice :heavy_check_mark:
 - Exercise Tracker (Full Stack) :heavy_check_mark:
 - File Metadata Microservice :heavy_check_mark:
+
+<br>
+
+[![FCC Backend Development & API Certificate](FCC-BE-Certificate.PNG "FCC Backend Development & API Certificate")](https://www.freecodecamp.org/certification/bilal44/back-end-development-and-apis)
