@@ -10,4 +10,4 @@ Five projects developed for FreeCodeCamp's 'Back End Development and APIs' onlin
 
 <br>
 
-[![FCC Backend Development & API Certificate](FCC-BE-Certificate.PNG "FCC Backend Development & API Certificate")](https://www.freecodecamp.org/certification/bilal44/back-end-development-and-apis)
+<a href="https://www.freecodecamp.org/certification/bilal44/back-end-development-and-apis" title="FCC Backend Development & API Certificate"><center><img src="FCC-BE-Certificate.PNG" text="FCC Backend Development & API Certificate"/></center></a>
