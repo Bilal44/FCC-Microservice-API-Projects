@@ -43,9 +43,18 @@ app.get("/api/users", (req, res) => {
 
 // Create new user
 app.post("/api/users", (req, res) => {
+
+  const username = req.body.username
+  
+  // Validate for empty user input
+  if (username.trim() == "") {
+    res.json({error: "Please enter a username"});
+    return;
+  }
+
   // Check if a user exists with the same username
   try {
-    User.findOne({ username: req.body.username }, (err, data) => {
+    User.findOne({ username }, (err, data) => {
       if (err) {
         console.error(err);
         res.status(500).send(err.message);
@@ -55,7 +64,7 @@ app.post("/api/users", (req, res) => {
         } else {
           // Create a new user record if an existing user with the provided username not found
           try {
-            const newUser = new User({ username: req.body.username })
+            const newUser = new User({ username })
             newUser.save((err, data) => {
               if (err) {
                 console.error(err);
