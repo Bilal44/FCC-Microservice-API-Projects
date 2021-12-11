@@ -11,7 +11,7 @@ body {
 
 h1 {
   font-weight: bold;
-  
+  margin-left: 6%;
 }
 
 p {
@@ -21,7 +21,7 @@ p {
 form {
   margin-bottom: 25px;
   padding: 15px;
-  background-color: #87D37C;
+  background-color:#b2bec3;
   display: inline-block;
   width: 100%;
   max-width: 340px;
@@ -34,21 +34,27 @@ input {
   padding: 5px;
   width: 100%;
   border: 1px solid lightgrey;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 16px;
 }
 
 input[type=submit] {
   font-size: 16px;
-  border-radius: 3px;
-  background-color: #E4F1FE;
-  border: 1px solid grey;
-  box-shadow: 2px 2px #999;
+  border-radius: 4px;
+  color: #fff;
+  background-color:#28a745;
+  border:#28a745;
   cursor: pointer;
 }
 
 input[type=submit]:hover {
-  background-color: #FFFEC4;
+  color: #fff;
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+input[type=submit]:focus {
+  box-shadow: 0 0 0 0.2rem rgba(72, 180, 97, 0.5);
 }
 
 code {
