@@ -4,11 +4,11 @@ const bodyParser = require('body-parser');
 const app = express()
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, './process.env') });
+require('dotenv').config({ path: path.resolve(__dirname, './.env') });
 
 // Basic Configuration
-const port = process.env.PORT || 3000;
-mongoose.connect(process.env.MONGO_URI, {
+const port = .env.PORT || 3000;
+mongoose.connect(.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -170,6 +170,6 @@ app.get("/api/users/:_id/logs", (req, res) => {
   }
 })
 
-const listener = app.listen(process.env.PORT || 3000, () => {
+const listener = app.listen(.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
